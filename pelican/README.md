@@ -25,7 +25,58 @@ The sizing and configuration can be customized and managed using ConfigMaps and 
 
 ## **INSTALLATION**
 
-### Steps for running Pelican(BYOL) on AKS:
+### Pre-requisites for deployment of Pelican Application
+
+* Azure-CLI
+* Kubectl utility
+* Helm utility
+* Docker 
+* Python3
+* An Azure account with permissions to create an AKS cluster and Push/Pull images to an ACR
+
+### Steps for running Pelican(BYOL) on AKS via Deployment script:
+
+Before running the deployment script, make sure:
+
+* You have all the Pre-requisites covered.
+
+* You have provided values of all the arguments required by the deployment script.
+
+* You have subscribed to Azure Pelican Offer from Marketplace and provided that image repo name and tag to the deployment script as arguments.
+&nbsp;
+##### **Deployment script Argument descriptions**:
+&nbsp;
+
+| Argument | Description |
+| ------ | ------ |
+| username | Username for Azure cloud account |
+| git_url | Git URL for Pelican Artifacts |
+| subscriptionID | Azure SubscriptionID to use |
+| resourcegroup | Azure ResourceGroup to use |
+| registryname | Azure registry to use for pushing Pelican DB image |
+| registryusername | Azure registry admin username to use for pushing Pelican DB image |
+| registrypassword | Azure registry admin password to use for pushing Pelican DB image |
+| loadbalancerrange | Loadbalancer range to allow Pelican access to. Eg. 52.43.31.82/32 |
+| dbpassword | Pelican DB password (pelicanuser) | 
+| imagename | Pelican image full qualified name obtained after Pelican offer subscription from Azure Marketplace |
+| imagetag | Pelican image tag obtained after Pelican offer subscription from Azure Marketplace |
+| virtualNetworkNewOrExisting | Choose if (new/existing) VNet to be used for Pelican Deployment |
+| virtualNetworkName | Provide the name of Virtual Network |
+| virtualNetworkAddressPrefix | Provide the Virtual Network address space |
+| subnetName | Provide the subnet name |
+| subnetAddressPrefix | Provide the Virtual subnet address space |
+
+
+#### **Note** 
+****
+
+In case the pod launch fails due to some misconfiguration of values in helm chart or error in deployment, please rerun the deployment script with appropriate changes in the helm and script values and making sure all the steps were followed as provided. 
+
+Once you will re-run the deployment script, provide the appropriate values asked and when prompted, choose to clean up the old version of helm and install a fresh version.
+
+****
+&nbsp;
+### Steps for running Pelican(BYOL) on AKS via Manual steps:
 
 In order to deploy Pelican, we will require an AKS cluster. We can use an existing cluster or create a new one. Steps for creating a new cluster are as given below:
 
@@ -60,7 +111,7 @@ git clone [git_url]
 6\. Finally, Run the below command to set up AKS cluster:
 
 ```sh
-az deployment group create --name [DeploymentName] --resource-group [ResourceGroupName] --template-file deploy/azuredeploy.json --parameters deploy/azuredeploy.parameters.json
+az deployment group create --name [DeploymentName] --resource-group [ResourceGroupName] --template-file deploy/azuredeploy.json --parameters deploy/azuredeploy.parameters.json --parameters resourceName=[PelicanClusterName]
 ```
 
 
@@ -107,10 +158,44 @@ pelican:
   namespace: "default"
 ```
 &nbsp;
+##### Steps for building and hosting Pelican DB image on Azure cloud
+&nbsp;
+Build the Pelican DB image using the following command from pelican directory:  
+```sh
+docker build -t [IMAGE_TAG] .
+```
+Now, change the docker image tag of built image so that we can push it to the private Azure Container Registry using the following command:
+```sh
+docker tag [IMAGE_TAG] [containerRegistryName].azurecr.io/[Repo_Name]:[Version]
+```
+For example:
+****
+Assuming,
+&nbsp;
+The private Azure Container Registry is 'sampleRegistry' 
+Repository name is 'pelican'
+Version is 'v1'
+IMAGE_TAG that you gave is 'pelicanTestImage',
+&nbsp;
+The command would be:
+```sh
+docker tag  pelicanTestImage:latest  sampleRegistry.azurecr.io/pelican:v1
+```
+****
+&nbsp;
+Now log in to the Azure container registry so that the image can be pushed using the following command:
+```sh
+docker login [containerRegistryName].azurecr.io -u 00000000-0000-0000-0000-000000000000 -p $(az acr login -n [containerRegistryName] --expose-token 2> /dev/null | awk -F '\"' 'NR==2 {print $4}')
+```
+Now push the image into the Azure container registry using the following command:
+```sh
+docker push [containerRegistryName].azurecr.io/[Repo_Name]:[Version]
+```
+&nbsp;
 Provide the image repo name and tag in the “**image**” section under container name **pelicandb** in the Helm charts using the image built by the Dockerfile for DB image. The DB image should also be hosted in the same container registry as pelican image else it would require creation and configuration of additional kubernetes secrets for pulling image from another private registry. 
-
-Reference configuration:
-
+&nbsp;
+##### Reference configuration:
+&nbsp;
 ```sh
 pelicandb:
   replicas: 1
@@ -191,4 +276,3 @@ az aks get-credentials --resource-group [resource-group-name] --name [cluster-na
 kubectl get svc
 ```
 After running the above command, you will get the LoadBalancer IP address and port number to launch the Pelican application from a web browser with appropriate network configurations (in case of VPN).
-

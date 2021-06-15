@@ -42,7 +42,7 @@
       }
     },
     "agentVMSize": {
-      "defaultValue": "Standard_DS3_v2",
+      "defaultValue": "Standard_D8s_v3",
       "type": "string",
       "metadata": {
         "description": "The size of the Virtual Machine."
@@ -59,7 +59,7 @@
       }
     },
     "kubernetesVersion": {
-      "defaultValue": "1.18.14",
+      "defaultValue": "1.18.17",
       "type": "string",
       "metadata": {
         "description": "The version of Kubernetes."

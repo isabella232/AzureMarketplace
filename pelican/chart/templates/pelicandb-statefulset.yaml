@@ -16,13 +16,24 @@ spec:
       labels:
         app.kubernetes.io/component: pelican-db
     spec:
+      securityContext:
+        fsGroup: 999
       containers:
       - name: pelican-db
         image: "{{ .Values.pelicandb.image.repo }}:{{ .Values.pelicandb.image.tag }}"
+#        resources:
+#          requests:
+#            memory: "4Gi"
+#            cpu: "250m"
+#          limits:
+#            memory: "6Gi"
+#            cpu: "500m"
         imagePullPolicy: Always
         env:
           - name: MYSQL_ROOT_PASSWORD
-            value: 
+            value: SecuredPass@321
+        args:
+          - "--ignore-db-dir=lost+found"
         ports:
         - name: mysql
           containerPort: {{ .Values.pelicandb.port }}
@@ -56,12 +67,20 @@ spec:
           timeoutSeconds: {{ .Values.pelicandb.readinessProbe.timeoutSeconds }}
           successThreshold: {{ .Values.pelicandb.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.pelicandb.readinessProbe.failureThreshold }}
-      restartPolicy: Always    
-      volumes:
-      - name: mysql-data
-        emptyDir: {}    
+      restartPolicy: Always
+      imagePullSecrets: 
+          - name: acr-secret    
+      volumes:   
       - name: init-db
         configMap:
           name: {{ .Release.Name }}-init-db
           defaultMode: 420
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 60Gi
 

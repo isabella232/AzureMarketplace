@@ -25,6 +25,13 @@ spec:
       containers:
         - name: pelican-web
           image: "{{ .Values.pelican.image.repo }}:{{ .Values.pelican.image.tag }}"
+#          resources:
+#            requests:
+#              memory: "6Gi"
+#              cpu: "500m"
+#            limits:
+#             memory: "8Gi"
+#             cpu: "700m"
           imagePullPolicy: Always 
           env:
             - name: DB_HOST
