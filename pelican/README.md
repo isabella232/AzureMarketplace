@@ -66,6 +66,39 @@ Before running the deployment script, make sure:
 | subnetName | Provide the subnet name |
 | subnetAddressPrefix | Provide the Virtual subnet address space |
 
+##### Execution steps:
+
+* Clone this github repo
+```
+git clone https://github.com/datametica/AzureMarketplace.git
+```
+
+* Run the following deployment script command to get the help 
+```
+python3 deployment.py -h
+```
+
+*please note: The script needs few argumats to run the complete deployment. Please refer argument description table or the help message from above command* 
+
+* After deciding all the inputs that required to run the deployment script, execute the deployment script. Below is the sample example
+```
+python3 deployment.py --username john.doe@microsoft.com  \
+        --git_url https://github.com/projects/AzureMarketplace.git \
+        --subscriptionID 21e87802-e43e-4149-9921-90971c45638c \
+        --resourcegroup Datametica_Product_RG \
+        --virtualNetworkNewOrExisting new \
+        --virtualNetworkName PelicanVnet \
+        --virtualNetworkAddressPrefix 172.26.10.0/24 \
+        --subnetName Pelican-Subnet \
+        --subnetAddressPrefix 172.26.10.0/25 \
+        --registryname sampleRegistry \
+        --registryusername sampleRegistry \
+        --registrypassword fehipfpwhhwphdqfphfwcjo \
+        --loadbalancerrange 52.43.31.82/32 \
+        --dbpassword pelicanuser@123 \ 
+        --imagename sampleRegistry.azurecr.io/pelicanbyol \
+        --imagetag 1.0.1
+```
 
 #### **Note** 
 ****
