@@ -35,7 +35,7 @@ if len(sys.argv) < 2:
     print("\n"+out[1])
     sys.exit()
 
-my_parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, allow_abbrev=False,prog='createCluster',usage='python3 deployment.py [--option argument]',description='Subscribing the Pelican Application from Azure Marketplace',  epilog='Example Command: python3 deployment.py --username john.doe@microsoft.com  --git_url https://github.com/projects/AzureMarketplace.git  --subscriptionID 21e87802-e43e-4149-9921-90971c45638c  --resourcegroup Datametica_Product_RG --virtualNetworkNewOrExisting new --virtualNetworkName PelicanVnet --virtualNetworkAddressPrefix 172.26.10.0/24 --subnetName Pelican-Subnet --subnetAddressPrefix 172.26.10.0/25 --registryname sampleRegistry  --registryusername sampleRegistry  --registrypassword fehipfpwhhwphdqfphfwcjo  --loadbalancerrange 52.43.31.82/32 --dbpassword pelicanuser@123 --imagename sampleRegistry.azurecr.io/pelicanbyol --imagetag 1.0.1\n\n\n')
+my_parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, allow_abbrev=False,prog='createCluster',usage='python3 deployment.py [--option argument]',description='Subscribing the Pelican Application from Azure Marketplace',  epilog='Example Command: python3 deployment.py --username john.doe@microsoft.com  --git_url https://github.com/projects/AzureMarketplace.git  --subscriptionID 21e87802-e43e-4149-9921-90971c45638c  --resourcegroup Pelican_Product_RG --location EastUS --virtualNetworkNewOrExisting new --virtualNetworkName PelicanVnet --virtualNetworkAddressPrefix 172.26.10.0/24 --subnetName Pelican-Subnet --subnetAddressPrefix 172.26.10.0/25 --registryname sampleRegistry  --registryusername sampleRegistry  --registrypassword fehipfpwhhwphdqfphfwcjo  --loadbalancerrange 52.43.31.82/32 --dbpassword pelicanuser@123 --imagename sampleRegistry.azurecr.io/pelicanbyol --imagetag 1.0.1\n\n\n')
 my_parser.add_argument('--username', action='store', help='Provide the Azure cloud username')
 my_parser.add_argument('--git_url', action='store', help='Provide the Git URL for fetching Pelican Artifacts')
 my_parser.add_argument('--subscriptionID', action='store', help='Provide the Azure subscription ID to use for the application deployment')
@@ -52,6 +52,8 @@ my_parser.add_argument('--virtualNetworkName', action='store', help='Provide the
 my_parser.add_argument('--virtualNetworkAddressPrefix', action='store', help='Provide the virtual network prefix')
 my_parser.add_argument('--subnetAddressPrefix', action='store', help='Provide the subnet network prefix')
 my_parser.add_argument('--subnetName', action='store', help='Provide the subnet name')
+my_parser.add_argument('--location', action='store', help='Provide the location for virtual network (Check if desired location is not blocked)')
+
 
 args = my_parser.parse_args()
 
@@ -149,7 +151,7 @@ choice = input("Please provide input (new/existing): ")
 if choice == "new":
     clusterName = input("\nPlease provide the Pelican AKS cluster name: ")
     print("\nTrying to deploy a new Pelican AKS Cluster...\n")
-    out = os.system("az deployment group create --name {} --resource-group {} --template-file deploy/azuredeploy.json --parameters deploy/azuredeploy.parameters.json --parameters resourceName={} --parameters VnetResourceGroup={} --parameters virtualNetworkNewOrExisting={} --parameters virtualNetworkName={} --parameters virtualNetworkAddressPrefix={} --parameters subnetAddressPrefix={} --parameters subnetName={}".format(clusterName, ResourceGroupName, clusterName, ResourceGroupName, args.virtualNetworkNewOrExisting, args.virtualNetworkName, args.virtualNetworkAddressPrefix, args.subnetAddressPrefix, args.subnetName))
+    out = os.system("az deployment group create --name {} --resource-group {} --template-file deploy/azuredeploy.json --parameters deploy/azuredeploy.parameters.json --parameters resourceName={} --parameters VnetResourceGroup={} --parameters location={} --parameters virtualNetworkNewOrExisting={} --parameters virtualNetworkName={} --parameters virtualNetworkAddressPrefix={} --parameters subnetAddressPrefix={} --parameters subnetName={}".format(clusterName, ResourceGroupName, clusterName, ResourceGroupName, args.location, args.virtualNetworkNewOrExisting, args.virtualNetworkName, args.virtualNetworkAddressPrefix, args.subnetAddressPrefix, args.subnetName))
     if out == 0:
         print("\nSuccessfully deployed the Pelican AKS Cluster!\n")
     else:
@@ -162,7 +164,7 @@ else:
     if choice == "new":
         clusterName = input("\nPlease provide the Pelican AKS cluster name: ")
         print("\nTrying to deploy a new Pelican AKS Cluster...\n")
-        out = os.system("az deployment group create --name {} --resource-group {} --template-file deploy/azuredeploy.json --parameters deploy/azuredeploy.parameters.json --parameters resourceName={} --parameters VnetResourceGroup={} --parameters virtualNetworkNewOrExisting={} --parameters virtualNetworkName={} --parameters virtualNetworkAddressPrefix={} --parameters subnetAddressPrefix={} --parameters subnetName={}".format(clusterName, ResourceGroupName, clusterName, ResourceGroupName, args.virtualNetworkNewOrExisting, args.virtualNetworkName, args.virtualNetworkAddressPrefix, args.subnetAddressPrefix, args.subnetName))
+        out = os.system("az deployment group create --name {} --resource-group {} --template-file deploy/azuredeploy.json --parameters deploy/azuredeploy.parameters.json --parameters resourceName={} --parameters VnetResourceGroup={} --parameters location={} --parameters virtualNetworkNewOrExisting={} --parameters virtualNetworkName={} --parameters virtualNetworkAddressPrefix={} --parameters subnetAddressPrefix={} --parameters subnetName={}".format(clusterName, ResourceGroupName, clusterName, ResourceGroupName, args.location, args.virtualNetworkNewOrExisting, args.virtualNetworkName, args.virtualNetworkAddressPrefix, args.subnetAddressPrefix, args.subnetName))
         if out == 0:
             print("\nSuccessfully deployed the Pelican AKS Cluster!\n")
         else:

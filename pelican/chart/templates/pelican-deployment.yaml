@@ -46,6 +46,9 @@ spec:
           - name: userconfigfresh
             mountPath: /tmp/userConfigFresh.xml
             subPath: userConfigFresh.xml
+          - mountPath: /usr/local/tomcat/bin/setenv.sh
+            name: setenv-config
+            subPath: setenv.sh
       imagePullSecrets: 
           - name: acr-secret
       volumes:
@@ -56,4 +59,8 @@ spec:
       - name: webapps
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-pelican-web-pvc
+      - configMap:
+          defaultMode: 0755
+          name: setenv-config
+        name: setenv-config
         
