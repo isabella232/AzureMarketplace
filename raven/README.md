@@ -24,12 +24,6 @@ The Raven AKS version adapts bring your own license pricing model and one can co
 * Python3
 * An Azure account with permissions to create an AKS cluster and Push/Pull images to an ACR
  
-**Raven Application images**
-Following are the latest Raven Images available at marketplace registry:
-
-- [marketplacetestacr.azurecr.io/raveninternal/raven:1.0.5](http://marketplacetestacr.azurecr.io/raveninternal/raven:1.0.5)
-- [marketplacetestacr.azurecr.io/raveninternal/ravendb:9.6](http://marketplacetestacr.azurecr.io/raveninternal/ravendb:9.6)
-
 ### Steps for running Raven (BYOL) on AKS via Deployment script:
 
 Before running the deployment script, make sure:
