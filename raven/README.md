@@ -1,19 +1,21 @@
 ## **Raven with BYOL on Azure marketplace**
 
 ### Overview
-Datametica intends to bring its suite of products starting with the Raven query translation and validation product to the cloud marketplace. We have implemented support to launch and use Raven over Kubernetes and can be integrated with Azure's AKS as a Kubernetes app with the marketplace.
+
+Datametica intends to bring its suite of migration automation products starting with Datametica's Raven - an automated SQL and ETL translation product to the Azure marketplace. We have implemented support to launch and use Raven over Kubernetes and can be integrated with Azure's AKS as a Kubernetes app with the marketplace.
 
 ### EKS Deployment architecture
 Raven can be deployed using helm charts on AKS, the deployment architecture will look like as below
 
 ![alt text](resources/raven.png)
 
-Raven on AKS accelerates the data translation process between source and destination data bases and performs automated data validations (for snowflake). For data persistence the application will sync the translated job details data with PDs.
+Raven on AKS accelerates the SQL and ETL translation process from legacy source systems to cloud-native technology. 
+
 Kubernetes manages Raven single-instance solutions and the Raven UI endpoints by default exposed externally using a LoadBalancer Service on a single port 8080 or 8443 - for HTTP and HTTPS interface.
 
 The sizing and configuration can be customized and managed using ConfigMaps and Helm chart values.yml
 
-The Raven AKS version adapts bring your own license pricing model and one can connect datametica support team <support.raven@datametica.com> for licesing.
+The Raven AKS version adapts brings your own license pricing model and one can connect with Datametica on support.raven@datametica.com or sales.raven@datametica.com or info@datametica.com for licensing.
 
 **Prerequisites**
  
@@ -67,16 +69,17 @@ git clone https://github.com/datametica/AzureMarketplace.git
 
 * Run the following deployment script command to get the help
 ```
-python3 deployment.py -h
+python3 raven-deployment.py -h
 ```
 *please note: The script needs few argumats to run the complete deployment. Please refer argument description table or the help message from above command*
 
 * After deciding all the inputs that required to run the deployment script, execute the deployment script. Below is the sample example
 ```
-python3 deployment.py --username john.doe@microsoft.com  \
+python3 raven-deployment.py --username john.doe@microsoft.com  \
         --git_url https://github.com/projects/AzureMarketplace.git \
         --subscriptionID 21e87802-e43e-4149-9921-90971c45638c \
         --resourcegroup Datametica_Product_RG \
+        --location useast2
         --virtualNetworkNewOrExisting new \
         --virtualNetworkName RavenVnet \
         --virtualNetworkAddressPrefix 172.26.10.0/24 \

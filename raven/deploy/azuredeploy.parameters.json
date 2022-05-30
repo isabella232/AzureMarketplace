@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location":{
+      "value": "East-US"
+    },
+    "virtualNetworkNewOrExisting":{
+      "value": "new"
+    },
+    "virtualNetworkName": {
+      "value": "Raven_VNet"
+    },
+    "virtualNetworkAddressPrefix":{
+      "value": "172.26.10.0/24"
+    },
+    "VnetResourceGroup": {
+      "value": "demoRG"
+    },
+    "subnetName": {
+      "value": "Raven_subnet1"
+    },
+    "subnetAddressPrefix":{
+      "value": "172.26.10.0/25"
+    }
+  }
+}
